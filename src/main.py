@@ -14,12 +14,14 @@ parser.add_argument('--driver_path', '-dr', type=str, required=True)
 # parse arguments
 args = vars(parser.parse_args())
 bot = PassetBot(**args)
-try:
-    bot.start_session()
-except Exception as e:
-    print(e)
-    print('Retrying...')
-    subprocess.run("pkill chrome",shell=True)
-    del bot
-    bot = PassetBot(**args)
-    bot.start_session()
+while True:
+    try:
+        bot.start_session()
+        quit()
+    except Exception as e:
+        print(e)
+        print('Retrying...')
+        subprocess.run("pkill chrome",shell=True)
+        del bot
+        bot = PassetBot(**args)
+        bot.start_session()
