@@ -28,6 +28,7 @@ class PassetBot:
         self.driver.find_element_by_xpath('//*[@id="AcceptInformationStorage"]').click()
         self._next_step()
         self._wait()
+
         # click "jag bor i sverige" and go to next
         self.driver.find_element_by_xpath('//*[@id="ServiceCategoryCustomers_0__ServiceCategoryId"]').click()
         self._next_step()
@@ -37,43 +38,26 @@ class PassetBot:
         self.driver.find_element_by_xpath('//*[@id="Main"]/form[1]/div/div[6]/div/input[2]').click()
         self._wait()
 
-        breakpoint()
         # check date
         available_date = datetime.strptime(self.driver.find_element_by_id(
             'datepicker').get_property('value'), '%Y-%m-%d')
-
-        # get both month and date
-        date, month = available_date.split(' ')
-        # print(month_date)
-
-        if self._check_time():
-            print('date ok')
-            # find timeslot
-            self.driver.find_element_by_css_selector("div[class='pointer timecell text-center ']").click()
-            # click "nästa steg"
-            self._next_step()
+        if available_date < self.latest_date:
+            print(f'slot available on {available_date}, booking...')
             self._book_time()
         else:
             print('no acceptable dates, retrying in 5 mins')
             time.sleep(5 * 60)
             self.start_session()
 
-    def _check_time(self):
-        if any(m for m in acceptable_months if m in month) and date < last_date:
-            return True
-        else:
-            return False
-
     def _next_step(self):
-        # click "nästa steg"
+        """
+        Click next button"""
         self.driver.find_element_by_name("Next").click()
 
     def _book_time(self):
-        # click "första lediga tid"
         # find timeslot
         self.driver.find_element_by_css_selector("div[class='pointer timecell text-center ']").click()
-        # click "nästa steg"
-        self.driver.find_element_by_name("Next").click()
+        self._next_step()
 
     def _reset_session(self):
         self.driver.delete_all_cookies()
