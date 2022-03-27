@@ -84,12 +84,19 @@ class PassetBot:
         # click first available timeslot
         self.driver.find_element_by_css_selector("div[class='pointer timecell text-center ']").click()
         self._next_step()
-        self._confirm_booking()
+        while attempts < 3:
+            try:
+                self._confirm_booking()
+            except Exception as e:
+                print(f'Booking failed: {e}')
+                attempts += 1
+            finally:
+                self.start_session()
 
     def _reset_session(self):
         self.driver.delete_all_cookies()
         self.driver.refresh()
         self._wait()
 
-    def _wait(self, seconds=2):
+    def _wait(self, seconds=1):
         time.sleep(seconds)
