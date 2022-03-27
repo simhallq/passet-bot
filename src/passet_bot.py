@@ -1,18 +1,19 @@
 import time
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
 class PassetBot:
-    def __init__(self, start_url, first_name, last_name, email, phone, latest_date):
+    def __init__(self, start_url, first_name, last_name, email, phone, latest_date, driver_path):
         self.start_url = start_url
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.phone = phone
-        self.latest_date = latest_date
+        self.latest_date = datetime.strptime(latest_date, '%Y-%m-%d')
         self.options = Options()
-        self.driver = webdriver.Chrome(options=self.options)
+        self.driver = webdriver.Chrome(executable_path=driver_path, options=self.options)
 
     def start_session(self):
         self._reset_session()
@@ -23,17 +24,12 @@ class PassetBot:
         self.driver.find_element_by_name('StartNextButton').click()
         self._wait()
 
-        # click accept conditions
+        # accept conditions and go to next
         self.driver.find_element_by_xpath('//*[@id="AcceptInformationStorage"]').click()
         self._next_step()
         self._wait()
-
-        self.driver.find_element_by_xpath('//*[@id="Main"]/form/div[2]/input').click()
-        self._wait()
-        # click "jag bor i sverige"
+        # click "jag bor i sverige" and go to next
         self.driver.find_element_by_xpath('//*[@id="ServiceCategoryCustomers_0__ServiceCategoryId"]').click()
-
-        # click "nästa steg"
         self._next_step()
         self._wait()
 
@@ -43,9 +39,8 @@ class PassetBot:
 
         breakpoint()
         # check date
-        available_date = self.driver.find_element_by_xpath('//*[@id="dateText"]').text.lower()
-        acceptable_months = ['apr']
-        last_date = 15
+        available_date = datetime.strptime(self.driver.find_element_by_id(
+            'datepicker').get_property('value'), '%Y-%m-%d')
 
         # get both month and date
         date, month = available_date.split(' ')
