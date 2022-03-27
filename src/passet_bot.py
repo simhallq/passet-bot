@@ -46,8 +46,8 @@ class PassetBot:
             print(f'Slot available on {available_date} in {region}, booking...')
             self._book_time()
         else:
-            print(f'No acceptable dates in {region}, earliest available {str(available_date)}, retrying in 15 sec')
-            time.sleep(15)
+            print(f'No acceptable dates in {region}, earliest available {str(available_date)}, retrying in 1 sec')
+            time.sleep(1)
             self.start_session()
 
     def _confirm_booking(self):
