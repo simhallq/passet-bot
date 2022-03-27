@@ -4,38 +4,30 @@ from selenium.webdriver.chrome.options import Options
 
 
 class PassetBot:
-    def __init__(self, start_url, first_name, last_name, email, phone, months_to_book, latest_date):
+    def __init__(self, start_url, first_name, last_name, email, phone, latest_date):
         self.start_url = start_url
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.phone = phone
-        self.months_to_book = months_to_book
-        self.latest_acceptable_date = latest_acceptable_date
+        self.latest_date = latest_date
         self.options = Options()
         self.driver = webdriver.Chrome(options=self.options)
-
-    def _reset_session(self):
-        self.driver.delete_all_cookies()
-        self.driver.refresh()
-        time.sleep(2)
-
-    def _wait(self, seconds=2):
-        time.sleep(seconds)
 
     def start_session(self):
         self._reset_session()
         self.driver.get(self.start_url)
         self._wait()
 
-        # click on "Boka tid"
+        # click on "Boka ny tid"
         self.driver.find_element_by_name('StartNextButton').click()
         self._wait()
 
         # click accept conditions
         self.driver.find_element_by_xpath('//*[@id="AcceptInformationStorage"]').click()
+        self._next_step()
+        self._wait()
 
-        # click "nästa steg"
         self.driver.find_element_by_xpath('//*[@id="Main"]/form/div[2]/input').click()
         self._wait()
         # click "jag bor i sverige"
@@ -49,6 +41,7 @@ class PassetBot:
         self.driver.find_element_by_xpath('//*[@id="Main"]/form[1]/div/div[6]/div/input[2]').click()
         self._wait()
 
+        breakpoint()
         # check date
         available_date = self.driver.find_element_by_xpath('//*[@id="dateText"]').text.lower()
         acceptable_months = ['apr']
@@ -58,7 +51,7 @@ class PassetBot:
         date, month = available_date.split(' ')
         # print(month_date)
 
-        if any(m for m in acceptable_months if m in month) and date < last_date:
+        if self._check_time():
             print('date ok')
             # find timeslot
             self.driver.find_element_by_css_selector("div[class='pointer timecell text-center ']").click()
@@ -86,3 +79,11 @@ class PassetBot:
         self.driver.find_element_by_css_selector("div[class='pointer timecell text-center ']").click()
         # click "nästa steg"
         self.driver.find_element_by_name("Next").click()
+
+    def _reset_session(self):
+        self.driver.delete_all_cookies()
+        self.driver.refresh()
+        self._wait()
+
+    def _wait(self, seconds=2):
+        time.sleep(seconds)
