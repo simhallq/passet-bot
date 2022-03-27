@@ -13,7 +13,8 @@ class PassetBot:
         self.phone = phone
         self.latest_date = datetime.strptime(latest_date, '%Y-%m-%d')
         self.options = Options()
-        self.options.add_argument('log-level=3')
+        self.options.add_argument('log-level=2')
+        self.options.add_argument('--headless')
         self.driver = webdriver.Chrome(executable_path=driver_path, options=self.options)
 
     def start_session(self):
@@ -79,7 +80,7 @@ class PassetBot:
         self._wait()
 
     def _book_time(self):
-        # find timeslot
+        # click first available timeslot
         self.driver.find_element_by_css_selector("div[class='pointer timecell text-center ']").click()
         self._next_step()
         self._confirm_booking()
