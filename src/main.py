@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 from passet_bot import PassetBot
 
 parser = argparse.ArgumentParser()
@@ -18,4 +19,7 @@ try:
 except Exception as e:
     print(e)
     print('Retrying...')
+    subprocess.run("pkill chrome",shell=True)
+    del bot
+    bot = PassetBot(**args)
     bot.start_session()

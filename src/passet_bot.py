@@ -84,9 +84,11 @@ class PassetBot:
         # click first available timeslot
         self.driver.find_element_by_css_selector("div[class='pointer timecell text-center ']").click()
         self._next_step()
+        attempts=0
         while attempts < 3:
             try:
                 self._confirm_booking()
+                quit()
             except Exception as e:
                 print(f'Booking failed: {e}')
                 attempts += 1
