@@ -39,13 +39,14 @@ class PassetBot:
         self._wait()
 
         # check date
+        region = self.start_url.split('/')[-1]
         available_date = datetime.strptime(self.driver.find_element_by_id(
             'datepicker').get_property('value'), '%Y-%m-%d')
         if available_date < self.latest_date:
-            print(f'Slot available on {available_date}, booking...')
+            print(f'Slot available on {available_date} in {region}, booking...')
             self._book_time()
         else:
-            print('No acceptable dates, retrying in 5 mins')
+            print(f'No acceptable dates in {region}, earliest available {str(available_date)}, retrying in 5 mins')
             time.sleep(5 * 60)
             self.start_session()
 
