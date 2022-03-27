@@ -13,4 +13,9 @@ parser.add_argument('--driver_path', '-dr', type=str, required=True)
 # parse arguments
 args = vars(parser.parse_args())
 bot = PassetBot(**args)
-bot.start_session()
+try:
+    bot.start_session()
+except Exception as e:
+    print(e)
+    print('Retrying...')
+    bot.start_session()
